@@ -4,38 +4,202 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <style>
+      body {
+        align-items: center;
+        background-color: #000;
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      .form {
+        background-color: #15172b;
+        border-radius: 20px;
+        box-sizing: border-box;
+        height: 500px;
+        padding: 20px;
+        width: 320px;
+      }
+
+      .title {
+        color: #eee;
+        font-family: sans-serif;
+        font-size: 36px;
+        font-weight: 600;
+        margin-top: 30px;
+      }
+
+      .subtitle {
+        color: #eee;
+        font-family: sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 10px;
+      }
+
+      .input-container {
+        height: 50px;
+        position: relative;
+        width: 100%;
+      }
+
+      .ic1 {
+        margin-top: 40px;
+      }
+
+      .ic2 {
+        margin-top: 30px;
+      }
+
+      .input {
+        background-color: #303245;
+        border-radius: 12px;
+        border: 0;
+        box-sizing: border-box;
+        color: #eee;
+        font-size: 18px;
+        height: 100%;
+        outline: 0;
+        padding: 4px 20px 0;
+        width: 100%;
+      }
+
+      .cut {
+        background-color: #15172b;
+        border-radius: 10px;
+        height: 20px;
+        left: 20px;
+        position: absolute;
+        top: -20px;
+        transform: translateY(0);
+        transition: transform 200ms;
+        width: 76px;
+      }
+
+      .cut-short {
+        width: 50px;
+      }
+
+      .input:focus ~ .cut,
+      .input:not(:placeholder-shown) ~ .cut {
+        transform: translateY(8px);
+      }
+
+      .placeholder {
+        color: #65657b;
+        font-family: sans-serif;
+        left: 20px;
+        line-height: 14px;
+        pointer-events: none;
+        position: absolute;
+        transform-origin: 0 50%;
+        transition: transform 200ms, color 200ms;
+        top: 20px;
+      }
+
+      .input:focus ~ .placeholder,
+      .input:not(:placeholder-shown) ~ .placeholder {
+        transform: translateY(-30px) translateX(10px) scale(0.75);
+      }
+
+      .input:not(:placeholder-shown) ~ .placeholder {
+        color: #808097;
+      }
+
+      .input:focus ~ .placeholder {
+        color: #dc2f55;
+      }
+
+      .submit {
+        background-color: #08d;
+        border-radius: 12px;
+        border: 0;
+        box-sizing: border-box;
+        color: #eee;
+        cursor: pointer;
+        font-size: 18px;
+        height: 50px;
+        margin-top: 38px;
+        outline: 0;
+        text-align: center;
+        width: 100%;
+      }
+
+      .submit:active {
+        background-color: #06b;
+      }
+
+      p,a {
+        color: #dc2f55;
+      }
+      a{
+        text-decoration: none;
+        margin-top: 50px;
+      }
+    </style>
+    <title>QR Generator</title>
   </head>
   <body>
-    <label for="text">Link / Text</label>
-    <input type="text" placeholder="https://nomadao.net/" id="text" />
-    <label for="size">QR Size in pixels</label>
-    <input type="number" placeholder="300" min="100" max="3000" id="size" />
-    <label for="bg-color">Background Color:</label>
-    <input type="color" id="bg-color" />
-    <label for="fg-color">Foreground Color:</label>
-    <input type="color" id="fg-color" />
-    <button>Generate</button>
+    <div class="form">
+      <div class="title">QR Generator</div>
+      <div class="subtitle">Permanent / Free</div>
+      <div class="input-container ic1">
+        <input id="text" class="input" type="text" placeholder=" " />
+        <div class="cut"></div>
+        <label for="text" class="placeholder">Link / Text</label>
+      </div>
+      <div class="input-container ic2">
+        <input id="size" class="input" type="text" placeholder=" " />
+        <div class="cut"></div>
+        <label for="size" class="placeholder">Size in px</label>
+      </div>
+      <div style="display: flex">
+        <div class="input-container ic2">
+          <input id="bg-color" class="input" type="color" placeholder=" " style="width: 120px" />
+          <div class="cut"></div>
+          <label for="bg-color" class="placeholder">BG Color</label>
+        </div>
+        <div class="input-container ic2">
+          <input id="fg-color" class="input" type="color" placeholder=" " style="width: 120px" />
+          <div class="cut"></div>
+          <label for="fg-color" class="placeholder">FG Color</label>
+        </div>
+      </div>
+      <button class="submit">Generate</button>
+    </div>
     <p></p>
     <canvas id="canvas"></canvas>
-
     <script src="./node_modules/qrcode/build/qrcode.js"></script>
     <script>
       document.querySelector("button").addEventListener("click", generate);
       function generate() {
         document.querySelector("button").removeEventListener("click", generate);
+        if(document.querySelector('a')){
+          document.querySelector('a').remove()
+        }
         var opts = {
           errorCorrectionLevel: "H",
           type: "image/jpeg",
-          width: Number(document.getElementById('size').value),
+          width: Number(document.getElementById("size").value),
           color: {
-            dark: document.getElementById('fg-color').value,
-            light: document.getElementById('bg-color').value,
+            dark: document.getElementById("fg-color").value,
+            light: document.getElementById("bg-color").value,
           },
         };
-        QRCode.toCanvas(document.getElementById("canvas"), document.getElementById('text').value, opts, function (error) {
-          if (error) document.querySelector('p').innerHTML = JSON.stringify(error);
-          document.querySelector("button").addEventListener("click", generate);
+        QRCode.toCanvas(document.getElementById("canvas"), document.getElementById("text").value, opts, function (error) {
+          if (error) {
+            document.querySelector("p").innerHTML = error;
+          } else {
+            document.querySelector("button").addEventListener("click", generate);
+            document.querySelector("p").innerHTML = "";
+            var link = document.createElement("a");
+            link.download = "qr.png";
+            link.innerText = "Download"
+            link.href = document.getElementById("canvas").toDataURL();
+            document.body.appendChild(link);
+          }
         });
       }
     </script>
