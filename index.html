@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <label for="text">Link / Text</label>
+    <input type="text" placeholder="https://nomadao.net/" id="text" />
+    <label for="size">QR Size in pixels</label>
+    <input type="number" placeholder="300" min="100" max="3000" id="size" />
+    <label for="bg-color">Background Color:</label>
+    <input type="color" id="bg-color" />
+    <label for="fg-color">Foreground Color:</label>
+    <input type="color" id="fg-color" />
+    <button>Generate</button>
+    <p></p>
+    <canvas id="canvas"></canvas>
+
+    <script src="./node_modules/qrcode/build/qrcode.js"></script>
+    <script>
+      document.querySelector("button").addEventListener("click", generate);
+      function generate() {
+        document.querySelector("button").removeEventListener("click", generate);
+        var opts = {
+          errorCorrectionLevel: "H",
+          type: "image/jpeg",
+          width: Number(document.getElementById('size').value),
+          color: {
+            dark: document.getElementById('fg-color').value,
+            light: document.getElementById('bg-color').value,
+          },
+        };
+        QRCode.toCanvas(document.getElementById("canvas"), document.getElementById('text').value, opts, function (error) {
+          if (error) document.querySelector('p').innerHTML = JSON.stringify(error);
+          document.querySelector("button").addEventListener("click", generate);
+        });
+      }
+    </script>
+  </body>
+</html>
